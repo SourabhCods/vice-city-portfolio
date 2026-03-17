@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sourabh Goyal — Vice City Portfolio</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060010;overflow:hidden;font-family:'Courier New',monospace;cursor:none}
+#cv{position:fixed;inset:0}
+
+/* ── CINEMATIC INTRO ── */
+#INTRO{position:fixed;inset:0;z-index:1000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+#INTRO .tv-static{position:absolute;inset:0;opacity:.18;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;animation:staticAnim .08s steps(1) infinite}
+@keyframes staticAnim{0%{background-position:0 0}25%{background-position:40px 20px}50%{background-position:-20px 40px}75%{background-position:60px -30px}100%{background-position:-40px 60px}}
+#INTRO .vc-title{font-size:clamp(3rem,12vw,8rem);font-weight:900;font-style:italic;letter-spacing:6px;color:#FF1493;text-shadow:4px 4px 0 #9D0060,0 0 60px #FF1493,0 0 120px #FF149366;animation:vcPulse 1.2s ease-in-out infinite alternate;opacity:0;transition:opacity .4s}
+#INTRO .vc-sub{font-size:clamp(.7rem,2vw,1.1rem);letter-spacing:14px;color:#00CED1;text-shadow:0 0 20px #00CED1;margin-top:-8px;opacity:0;transition:opacity .4s .3s}
+#INTRO .vc-year{font-size:clamp(.6rem,1.5vw,.9rem);letter-spacing:8px;color:rgba(255,255,255,.3);margin-top:16px;opacity:0;transition:opacity .4s .5s}
+#INTRO .scanline{position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);pointer-events:none}
+#INTRO .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.9) 100%);pointer-events:none}
+#INTRO.show .vc-title{opacity:1}
+#INTRO.show .vc-sub{opacity:1}
+#INTRO.show .vc-year{opacity:1}
+@keyframes vcPulse{from{text-shadow:4px 4px 0 #9D0060,0 0 30px #FF1493}to{text-shadow:4px 4px 0 #9D0060,0 0 80px #FF1493,0 0 160px #FF149366}}
+#INTRO .skip-hint{position:absolute;bottom:30px;font-size:.55rem;letter-spacing:4px;color:rgba(255,255,255,.2);animation:blink 2s ease-in-out infinite}
+
+/* ── LOADER ── */
+#LD{position:fixed;inset:0;z-index:999;background:#060010;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;display:none}
+#LD .logo{font-size:clamp(1.8rem,6vw,3.8rem);font-weight:900;font-style:italic;letter-spacing:8px;color:#FF1493;text-shadow:0 0 30px #FF1493,0 0 60px #FF1493aa;animation:glow 1.4s ease-in-out infinite alternate}
+#LD .sub{color:#00CED1;font-size:.75rem;letter-spacing:10px;text-shadow:0 0 8px #00CED1}
+#LD .pbar{width:260px;height:3px;background:rgba(255,255,255,.1);border:1px solid #FF1493}
+#LD .pfill{height:100%;background:linear-gradient(90deg,#FF1493,#9D4EDD,#00CED1);transition:width .15s}
+#LD .ptip{color:rgba(255,255,255,.35);font-size:.65rem;letter-spacing:3px}
+@keyframes glow{from{text-shadow:0 0 20px #FF1493}to{text-shadow:0 0 50px #FF1493,0 0 100px #FF1493}}
+
+/* ── SCAN LINES ── */
+#SL{position:fixed;inset:0;pointer-events:none;z-index:9;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px);display:none}
+
+/* ── RAIN OVERLAY ── */
+#RAIN{position:fixed;inset:0;pointer-events:none;z-index:8;display:none}
+
+/* ── HERO IDENTITY ── */
+#HERO{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .6s;background:rgba(0,0,0,.35)}
+#HERO.show{opacity:1}
+.hero-name{font-size:clamp(2.4rem,8vw,5.5rem);font-weight:900;font-style:italic;letter-spacing:6px;color:#fff;text-shadow:4px 4px 0 #FF1493,0 0 50px #FF1493aa;line-height:1;text-align:center;animation:heroSlide .8s ease-out both}
+.hero-role{color:#00CED1;font-size:clamp(.8rem,2.2vw,1.1rem);letter-spacing:10px;margin-top:12px;text-shadow:0 0 18px #00CED1;text-align:center;animation:heroSlide .8s .15s ease-out both}
+.hero-stack{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center;animation:heroSlide .8s .3s ease-out both}
+.hero-stack span{padding:5px 16px;border:1px solid rgba(255,20,147,.6);color:#FF1493;font-size:.68rem;letter-spacing:2px;background:rgba(255,20,147,.08);text-shadow:0 0 8px #FF1493}
+.hero-hint{color:rgba(255,255,255,.35);font-size:.6rem;letter-spacing:4px;margin-top:30px;animation:blink 1.5s ease-in-out infinite}
+@keyframes heroSlide{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes blink{0%,100%{opacity:.8}50%{opacity:.15}}
+
+/* ── HUD ── */
+#HUD{position:fixed;inset:0;pointer-events:none;z-index:20;display:none}
+.hname{position:absolute;top:20px;left:20px;border-left:3px solid #FF1493;padding:7px 14px;background:rgba(0,0,0,.88);backdrop-filter:blur(8px)}
+.hname h1{font-size:1.15rem;font-weight:900;font-style:italic;color:#FF1493;text-shadow:0 0 12px #FF1493;letter-spacing:3px;line-height:1}
+.hname p{color:#00CED1;font-size:.55rem;letter-spacing:4px;margin-top:2px}
+
+/* ── WANTED STARS ── */
+#WANTED{position:absolute;top:58px;left:20px;display:flex;gap:5px;background:rgba(0,0,0,.8);padding:6px 10px;border:1px solid rgba(255,200,0,.15);pointer-events:none}
+#WANTED i{color:#222;font-style:normal;font-size:1.1rem;transition:all .25s}
+#WANTED i.on{color:#FFD700;text-shadow:0 0 10px #FFD700}
+#WANTED i.flash{animation:wantedFlash .3s ease-in-out infinite}
+@keyframes wantedFlash{0%,100%{color:#FFD700;text-shadow:0 0 14px #FFD700}50%{color:#FF4400;text-shadow:0 0 18px #FF4400}}
+
+/* ── QUICK LINKS ── */
+#QLINKS{position:absolute;top:20px;right:20px;display:flex;flex-direction:column;gap:6px;pointer-events:auto}
+.ql-btn{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,0,0,.88);border:1px solid rgba(255,20,147,.35);color:#FF1493;font-size:.6rem;letter-spacing:2px;text-decoration:none;cursor:pointer;transition:all .2s;backdrop-filter:blur(6px);font-family:'Courier New',monospace;white-space:nowrap}
+.ql-btn:hover{background:rgba(255,20,147,.15);border-color:#FF1493;box-shadow:0 0 12px rgba(255,20,147,.3)}
+.ql-btn.teal{color:#00CED1;border-color:rgba(0,206,209,.35)}
+.ql-btn.teal:hover{background:rgba(0,206,209,.12);border-color:#00CED1;box-shadow:0 0 12px rgba(0,206,209,.3)}
+.ql-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* ── RECRUITER TOGGLE ── */
+#RMTOG{position:absolute;top:20px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.88);border:1px solid rgba(255,20,147,.4);padding:6px 18px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(8px);pointer-events:auto;cursor:pointer;transition:all .3s;z-index:21}
+#RMTOG:hover{border-color:#FF1493;box-shadow:0 0 18px rgba(255,20,147,.25)}
+#RMTOG .rm-label{color:rgba(255,255,255,.4);font-size:.58rem;letter-spacing:3px}
+#RMTOG .rm-status{color:#FF1493;font-size:.6rem;letter-spacing:2px;font-weight:700;text-shadow:0 0 6px #FF1493;transition:all .3s}
+#RMTOG .rm-dot{width:7px;height:7px;border-radius:50%;background:#333;transition:all .3s;flex-shrink:0}
+#RMTOG.rm-on .rm-dot{background:#FF1493;box-shadow:0 0 8px #FF1493;animation:blink 1s ease-in-out infinite}
+#RMTOG.rm-on{border-color:#FF1493;box-shadow:0 0 22px rgba(255,20,147,.35)}
+
+/* ── RADIO ── */
+.hrad{position:absolute;top:62px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.78);border:1px solid rgba(255,20,147,.3);padding:5px 16px;display:flex;align-items:center;gap:8px;backdrop-filter:blur(6px)}
+.hrad .rname{color:#FF1493;font-weight:700;font-size:.65rem;letter-spacing:2px;text-shadow:0 0 6px #FF1493}
+.hrad .rsong{color:rgba(255,255,255,.45);font-size:.6rem;letter-spacing:1px}
+.hrad .rdot{width:5px;height:5px;background:#FF1493;border-radius:50%;animation:blink 1s ease-in-out infinite}
+
+/* ── WEATHER BTN ── */
+#WBTN{position:absolute;top:62px;left:50%;margin-left:130px;background:rgba(0,0,0,.75);border:1px solid rgba(0,206,209,.2);padding:5px 10px;color:#00CED1;font-size:.58rem;letter-spacing:2px;cursor:pointer;pointer-events:auto;transition:all .2s}
+#WBTN:hover{border-color:#00CED1;background:rgba(0,206,209,.1)}
+
+/* ── TIME ── */
+.hday{position:absolute;top:62px;left:50%;margin-left:200px;background:rgba(0,0,0,.7);border:1px solid rgba(255,200,0,.2);padding:5px 10px;color:#FFD700;font-size:.6rem;letter-spacing:3px;text-shadow:0 0 6px #FFD700}
+
+/* ── CONTROLS ── */
+.hctrl{position:absolute;bottom:20px;left:20px;background:rgba(0,0,0,.78);border:1px solid rgba(255,20,147,.2);padding:8px 12px;font-size:.58rem;color:rgba(255,255,255,.4);line-height:2;backdrop-filter:blur(6px)}
+.hctrl .k{display:inline-block;background:rgba(255,20,147,.1);border:1px solid #FF1493;color:#FF1493;padding:1px 5px;font-size:.55rem;margin-right:3px}
+
+/* ── SPEED ── */
+.hsped{position:absolute;bottom:20px;right:160px;background:rgba(0,0,0,.78);border:1px solid rgba(0,206,209,.2);padding:7px 12px;text-align:center}
+.hsped .sn{font-size:1.8rem;font-weight:900;color:#00CED1;text-shadow:0 0 12px #00CED1;line-height:1}
+.hsped .sl{font-size:.5rem;letter-spacing:4px;color:rgba(255,255,255,.3)}
+
+/* ── MINIMAP ── */
+.hmm{position:absolute;bottom:20px;right:20px;width:126px;height:126px;border-radius:50%;border:2px solid #FF1493;background:rgba(0,0,0,.92);box-shadow:0 0 20px rgba(255,20,147,.4)}
+#MC{width:100%;height:100%;border-radius:50%}
+
+/* ── PROXIMITY ── */
+.hprox{position:absolute;bottom:160px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.94);border:1px solid #FF1493;color:#FF1493;font-size:.68rem;letter-spacing:3px;padding:7px 20px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .35s;text-shadow:0 0 6px #FF1493}
+.hprox.on{opacity:1}
+
+/* ── QUICK NAV ── */
+#QNAV{position:absolute;bottom:170px;right:20px;display:flex;flex-direction:column;gap:5px;pointer-events:auto}
+.qn-btn{padding:5px 10px;background:rgba(0,0,0,.85);border:1px solid rgba(255,20,147,.25);color:rgba(255,20,147,.7);font-size:.55rem;letter-spacing:2px;cursor:pointer;text-align:right;transition:all .2s;font-family:'Courier New',monospace}
+.qn-btn:hover{background:rgba(255,20,147,.12);border-color:#FF1493;color:#FF1493}
+
+/* ── STATS ── */
+#STATS{position:absolute;bottom:154px;left:20px;background:rgba(0,0,0,.85);border:1px solid rgba(0,206,209,.2);padding:6px 12px;backdrop-filter:blur(6px)}
+.stats-row{display:flex;gap:18px}
+.stat-item{text-align:center}
+.stat-val{font-size:1.1rem;font-weight:900;color:#00CED1;text-shadow:0 0 8px #00CED1;line-height:1}
+.stat-lbl{font-size:.45rem;letter-spacing:2px;color:rgba(255,255,255,.28);margin-top:1px}
+
+/* ── RECRUITER PROGRESS ── */
+#RMPROG{position:fixed;bottom:0;left:0;right:0;height:2px;background:rgba(255,20,147,.12);z-index:200;display:none;pointer-events:none}
+#RMPFILL{height:100%;background:linear-gradient(90deg,#FF1493,#9D4EDD,#00CED1);width:0%;transition:width .25s}
+#RMSTEP{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.92);border:1px solid rgba(255,20,147,.3);color:rgba(255,255,255,.45);font-size:.58rem;letter-spacing:3px;padding:5px 16px;z-index:200;display:none;pointer-events:none;white-space:nowrap}
+
+/* ── PANEL ── */
+#PNL{position:fixed;top:0;right:-460px;height:100%;width:430px;background:rgba(4,0,16,.97);border-left:3px solid #FF1493;z-index:50;transition:right .45s cubic-bezier(.25,.46,.45,.94);overflow-y:auto;pointer-events:auto;backdrop-filter:blur(18px)}
+#PNL.open{right:0}
+#PNL .pinn{padding:32px 24px;display:flex;flex-direction:column;gap:12px}
+.ptag{font-size:.55rem;letter-spacing:5px;color:#FF1493;text-shadow:0 0 6px #FF1493;display:flex;align-items:center;gap:8px}
+.ptag-badge{padding:2px 8px;border:1px solid currentColor;font-size:.5rem;letter-spacing:2px}
+.ptag-badge.best{color:#FFD700;border-color:#FFD700;text-shadow:0 0 8px #FFD700}
+.ptag-badge.prod{color:#00FF88;border-color:#00FF88;text-shadow:0 0 6px #00FF88}
+.ptag-badge.ai{color:#9D4EDD;border-color:#9D4EDD;text-shadow:0 0 8px #9D4EDD}
+.ptit{font-size:1.65rem;font-weight:900;font-style:italic;color:#fff;text-shadow:2px 2px 0 #FF1493;line-height:1.1}
+.pdiv{height:1px;background:linear-gradient(90deg,#FF1493,transparent)}
+.pbod{color:rgba(255,255,255,.72);font-size:.78rem;line-height:1.9}
+.pbod strong{color:#00CED1}
+.pskl{display:flex;flex-wrap:wrap;gap:5px}
+.pskl span{padding:3px 9px;background:rgba(255,20,147,.08);border:1px solid rgba(255,20,147,.35);color:#FF1493;font-size:.6rem;letter-spacing:1px}
+.plnk{display:flex;flex-wrap:wrap;gap:7px}
+.plnk a{padding:8px 15px;border:1px solid #00CED1;color:#00CED1;text-decoration:none;font-size:.65rem;letter-spacing:2px;transition:all .2s;font-family:'Courier New',monospace}
+.plnk a:hover{background:#00CED1;color:#000}
+.plnk a.primary{background:rgba(255,20,147,.08);border-color:#FF1493;color:#FF1493}
+.plnk a.primary:hover{background:#FF1493;color:#000}
+.pcls{position:absolute;top:14px;right:16px;color:rgba(255,255,255,.3);cursor:pointer;font-size:.9rem;pointer-events:auto;transition:color .2s;font-family:'Courier New',monospace}
+.pcls:hover{color:#FF1493}
+.pmetrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pmet{padding:8px 10px;background:rgba(0,206,209,.06);border:1px solid rgba(0,206,209,.2);text-align:center}
+.pmet .mv{font-size:1.2rem;font-weight:900;color:#00CED1;text-shadow:0 0 8px #00CED1;line-height:1}
+.pmet .ml{font-size:.5rem;letter-spacing:2px;color:rgba(255,255,255,.3);margin-top:2px}
+.parch{background:rgba(255,20,147,.04);border:1px solid rgba(255,20,147,.15);padding:10px 12px;font-size:.68rem;color:rgba(255,255,255,.55);line-height:1.8}
+.parch strong{color:#FF1493;letter-spacing:1px}
+
+/* ── MISSION OVERLAY ── */
+#MISSION{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.97);border:2px solid #FFD700;padding:36px 44px;z-index:300;text-align:center;display:none;max-width:500px;width:90%}
+#MISSION .m-title{font-size:.6rem;letter-spacing:6px;color:#FFD700;text-shadow:0 0 10px #FFD700;margin-bottom:10px}
+#MISSION .m-name{font-size:1.6rem;font-weight:900;font-style:italic;color:#fff;text-shadow:2px 2px 0 #FFD700;margin-bottom:14px;line-height:1.2}
+#MISSION .m-body{color:rgba(255,255,255,.65);font-size:.75rem;line-height:1.9;margin-bottom:20px}
+#MISSION .m-btns{display:flex;gap:10px;justify-content:center}
+#MISSION .m-btns button{padding:9px 22px;font-size:.65rem;letter-spacing:3px;border:1px solid #FFD700;color:#FFD700;background:transparent;cursor:pointer;font-family:'Courier New',monospace;transition:all .2s}
+#MISSION .m-btns button:hover{background:#FFD700;color:#000}
+#MISSION .m-btns button.sec{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.35)}
+#MISSION .m-btns button.sec:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ── MISSION COMPLETE FLASH ── */
+#MCOMP{position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .4s}
+#MCOMP .mc-inner{text-align:center}
+#MCOMP .mc-top{font-size:.65rem;letter-spacing:10px;color:#FFD700}
+#MCOMP .mc-title{font-size:clamp(2rem,6vw,4rem);font-weight:900;font-style:italic;color:#FFD700;text-shadow:3px 3px 0 #8B6000,0 0 40px #FFD700;line-height:1}
+#MCOMP.show{opacity:1}
+
+/* ── NOTIF ── */
+#NT{position:fixed;top:82px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(0,0,0,.96);border:1px solid #FF1493;color:#FF1493;font-size:.65rem;letter-spacing:3px;padding:7px 18px;opacity:0;transition:all .35s;pointer-events:none;z-index:100;text-shadow:0 0 6px #FF1493;max-width:90vw;text-align:center}
+#NT.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── SIMPLE FALLBACK ── */
+#SIMPLE{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:25;pointer-events:auto}
+#SIMPLE a{color:rgba(255,255,255,.2);font-size:.52rem;letter-spacing:3px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.08);transition:all .3s}
+#SIMPLE a:hover{color:rgba(255,255,255,.45)}
+
+/* ── CURSOR ── */
+#CUR{position:fixed;width:12px;height:12px;background:#FF1493;border:2px solid #fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 8px #FF1493;transition:transform .08s}
+
+/* ── RAIN FLASH ── */
+#LIGHTNING{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:15;transition:opacity .05s}
+</style>
+</head>
+<body>
+
+<!-- ── CINEMATIC INTRO ── -->
+<div id="INTRO">
+  <div class="tv-static"></div>
+  <div class="scanline"></div>
+  <div class="vignette"></div>
+  <div class="vc-title">VICE CITY</div>
+  <div class="vc-sub">SOURABH GOYAL · PORTFOLIO · 2026</div>
+  <div class="vc-year">PRESS ANYWHERE TO SKIP</div>
+  <div class="skip-hint">LOADING VICE CITY...</div>
+</div>
+
+<!-- ── LOADER ── -->
+<div id="LD">
+  <div class="logo">VICE CITY</div>
+  <div class="sub">SOURABH GOYAL · PORTFOLIO</div>
+  <div class="pbar"><div class="pfill" id="PF" style="width:0%"></div></div>
+  <div class="ptip" id="PT">LOADING OCEAN BEACH...</div>
+</div>
+
+<div id="SL"></div>
+<canvas id="RAIN"></canvas>
+<canvas id="cv"></canvas>
+<div id="LIGHTNING"></div>
+
+<!-- ── HERO IDENTITY ── -->
+<div id="HERO">
+  <div class="hero-name">SOURABH GOYAL</div>
+  <div class="hero-role">FULL STACK DEVELOPER</div>
+  <div class="hero-stack">
+    <span>JAVA</span><span>SPRING BOOT</span><span>REACT</span><span>NEXT.JS</span><span>TYPESCRIPT</span>
+  </div>
+  <div class="hero-hint">DRIVE TO BUILDINGS · PRESS E TO ENTER</div>
+</div>
+
+<!-- ── HUD ── -->
+<div id="HUD">
+  <div class="hname"><h1>SOURABH GOYAL</h1><p>FULL-STACK DEV · DELHI, INDIA</p></div>
+  <div id="WANTED"><i>★</i><i>★</i><i>★</i><i>★</i><i>★</i></div>
+
+  <div id="RMTOG" onclick="toggleRecruiterMode()">
+    <div class="rm-dot"></div>
+    <span class="rm-label">RECRUITER MODE</span>
+    <span class="rm-status" id="RMST">OFF</span>
+  </div>
+
+  <div id="QLINKS">
+    <a class="ql-btn" href="https://drive.google.com/file/d/1ZC2bZKAL-9HOmNnZhCCYpxIgMFT6hINY/view" target="_blank"><div class="ql-dot"></div>RESUME PDF</a>
+    <a class="ql-btn teal" href="https://github.com/SourabhCods" target="_blank"><div class="ql-dot"></div>GITHUB</a>
+    <a class="ql-btn teal" href="https://linkedin.com/in/sourabhgoyal21" target="_blank"><div class="ql-dot"></div>LINKEDIN</a>
+  </div>
+
+  <div class="hrad"><div class="rdot"></div><span class="rname">V-ROCK FM</span><span class="rsong" id="RSONG">RUNNING WITH THE NIGHT</span></div>
+  <div id="WBTN" onclick="toggleWeather()">☁ WEATHER</div>
+  <div class="hday" id="HDAY">18:30</div>
+
+  <div id="QNAV">
+    <div class="qn-btn" onclick="teleportTo('about')">ABOUT ME</div>
+    <div class="qn-btn" onclick="teleportTo('skills')">SKILLS</div>
+    <div class="qn-btn" onclick="teleportTo('exp')">EXPERIENCE</div>
+    <div class="qn-btn" onclick="teleportTo('flash')">BEST PROJECT</div>
+    <div class="qn-btn" onclick="teleportTo('canbuild')">FOR RECRUITERS</div>
+    <div class="qn-btn" onclick="teleportTo('contact')">CONTACT</div>
+  </div>
+
+  <div id="STATS">
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-val">300+</div><div class="stat-lbl">LEETCODE</div></div>
+      <div class="stat-item"><div class="stat-val">8.4</div><div class="stat-lbl">CGPA</div></div>
+      <div class="stat-item"><div class="stat-val">5</div><div class="stat-lbl">PROJECTS</div></div>
+      <div class="stat-item"><div class="stat-val">1</div><div class="stat-lbl">INTERNSHIP</div></div>
+    </div>
+  </div>
+
+  <div class="hctrl">
+    <div><span class="k">W</span><span class="k">A</span><span class="k">S</span><span class="k">D</span> Drive &nbsp;<span class="k">SPACE</span> Brake</div>
+    <div><span class="k">E</span> Enter &nbsp;<span class="k">R</span> Reset &nbsp;<span class="k">Mouse</span> Cam</div>
+    <div><span class="k">N/M</span> Day/Night &nbsp;<span class="k">C</span> Cam &nbsp;<span class="k">P</span> Rain</div>
+  </div>
+  <div class="hsped"><div class="sn" id="SPD">0</div><div class="sl">MPH</div></div>
+  <div class="hmm"><canvas id="MC" width="126" height="126"></canvas></div>
+  <div class="hprox" id="PRX"></div>
+</div>
+
+<!-- ── RECRUITER PROGRESS ── -->
+<div id="RMPROG"><div id="RMPFILL"></div></div>
+<div id="RMSTEP"></div>
+
+<!-- ── PANEL ── -->
+<div id="PNL">
+  <div class="pcls" onclick="closeP()">✕ CLOSE</div>
+  <div class="pinn">
+    <div class="ptag" id="PTAG"></div>
+    <div class="ptit" id="PTIT"></div>
+    <div class="pdiv"></div>
+    <div id="PMET"></div>
+    <div class="pbod" id="PBOD"></div>
+    <div id="PARC"></div>
+    <div class="pskl" id="PSKL"></div>
+    <div class="pdiv"></div>
+    <div class="plnk" id="PLNK"></div>
+  </div>
+</div>
+
+<!-- ── MISSION OVERLAY ── -->
+<div id="MISSION">
+  <div class="m-title">MISSION BRIEFING</div>
+  <div class="m-name" id="MNAME"></div>
+  <div class="m-body" id="MBODY"></div>
+  <div class="m-btns">
+    <button onclick="acceptMission()">ACCEPT MISSION</button>
+    <button class="sec" onclick="declineMission()">LATER</button>
+  </div>
+</div>
+
+<div id="MCOMP">
+  <div class="mc-inner">
+    <div class="mc-top">MISSION COMPLETE</div>
+    <div class="mc-title" id="MCTITLE"></div>
+  </div>
+</div>
+
+<div id="NT"></div>
+<div id="SIMPLE"><a href="https://github.com/SourabhCods" target="_blank">VIEW SIMPLE PORTFOLIO →</a></div>
+<div id="CUR"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+'use strict';
+// ════════════════════════════════════════════════════
+//  VICE CITY PORTFOLIO  v5  ·  Three.js r128
+//  Cinematic intro · Rain system · Engine audio
+//  Wanted stars · Mission system · Neon reflections
+// ════════════════════════════════════════════════════
+
+// ── CINEMATIC INTRO ──────────────────────────────────
+const INTRO=document.getElementById('INTRO');
+let introSkipped=false;
+function skipIntro(){
+  if(introSkipped) return;
+  introSkipped=true;
+  INTRO.style.transition='opacity .6s';
+  INTRO.style.opacity='0';
+  setTimeout(()=>{
+    INTRO.style.display='none';
+    document.getElementById('LD').style.display='flex';
+    startLoad();
+  },600);
+}
+setTimeout(()=>{
+  INTRO.classList.add('show');
+  setTimeout(skipIntro,4000);
+},200);
+INTRO.addEventListener('click',skipIntro);
+document.addEventListener('keydown',e=>{if(!introSkipped&&e.code!=='F5')skipIntro();});
+
+// ── LOAD ─────────────────────────────────────────────
+const TIPS=['LOADING OCEAN BEACH...','PLACING ART DECO HOTELS...','WIRING NEON SIGNS...','SPAWNING SPORTS CARS...','PAINTING SUNSET SKY...','BUILDING MAINLAND...','CONNECTING BRIDGES...','HIRING PEDESTRIANS...','TUNING V-ROCK FM...','ALMOST READY...'];
+let ti=0;
+const PF=document.getElementById('PF'),PT=document.getElementById('PT');
+let LDint,lpInt;
+
+function startLoad(){
+  LDint=setInterval(()=>{PT.textContent=TIPS[Math.min(++ti,TIPS.length-1)];},350);
+  let lp=0;
+  lpInt=setInterval(()=>{lp=Math.min(lp+Math.random()*8,92);PF.style.width=lp+'%';},150);
+  setTimeout(()=>clearInterval(lpInt),3000);
+  setTimeout(startGame,3200);
+}
+
+// ── RENDERER ─────────────────────────────────────────
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('cv'),antialias:true,powerPreference:'high-performance'});
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.8));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.0;
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(65,window.innerWidth/window.innerHeight,.1,1000);
+
+// ── WEB AUDIO ENGINE ─────────────────────────────────
+let audioCtx=null,engineOsc=null,engineGain=null,audioStarted=false;
+function initAudio(){
+  if(audioStarted) return;
+  try{
+    audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    engineGain=audioCtx.createGain();
+    engineGain.gain.value=0;
+    engineOsc=audioCtx.createOscillator();
+    engineOsc.type='sawtooth';
+    engineOsc.frequency.value=80;
+    const dist=audioCtx.createWaveShaper();
+    const curve=new Float32Array(256);
+    for(let i=0;i<256;i++){const x=i*2/256-1;curve[i]=x<0?-Math.pow(-x,.6):Math.pow(x,.6);}
+    dist.curve=curve;
+    engineOsc.connect(dist);dist.connect(engineGain);engineGain.connect(audioCtx.destination);
+    engineOsc.start();
+    audioStarted=true;
+  }catch(e){}
+}
+function updateEngineSound(speed,isAccel){
+  if(!audioCtx) return;
+  const rpm=60+Math.abs(speed)*600+Math.random()*8;
+  engineOsc.frequency.setTargetAtTime(rpm,audioCtx.currentTime,.05);
+  const vol=Math.min(Math.abs(speed)*2.5,.18);
+  engineGain.gain.setTargetAtTime(vol,audioCtx.currentTime,.08);
+}
+
+// ── RAIN CANVAS ──────────────────────────────────────
+const rainCv=document.getElementById('RAIN');
+rainCv.width=window.innerWidth;rainCv.height=window.innerHeight;
+rainCv.style.position='fixed';rainCv.style.inset='0';rainCv.style.zIndex='10';rainCv.style.pointerEvents='none';
+const rainCtx=rainCv.getContext('2d');
+let rainActive=false,rainDrops=[],rainIntensity=0;
+const RAIN_COUNT=350;
+function initRainDrops(){
+  rainDrops=[];
+  for(let i=0;i<RAIN_COUNT;i++){
+    rainDrops.push({x:Math.random()*rainCv.width,y:Math.random()*rainCv.height,len:8+Math.random()*14,spd:12+Math.random()*10,op:.3+Math.random()*.5});
+  }
+}
+initRainDrops();
+function drawRain(){
+  if(!rainActive){rainCtx.clearRect(0,0,rainCv.width,rainCv.height);return;}
+  rainCtx.clearRect(0,0,rainCv.width,rainCv.height);
+  rainCtx.strokeStyle=`rgba(180,220,255,${0.25*rainIntensity})`;
+  rainCtx.lineWidth=.8;
+  rainDrops.forEach(d=>{
+    rainCtx.beginPath();
+    rainCtx.moveTo(d.x,d.y);
+    rainCtx.lineTo(d.x-d.len*.18,d.y+d.len);
+    rainCtx.strokeStyle=`rgba(180,220,255,${d.op*rainIntensity})`;
+    rainCtx.stroke();
+    d.y+=d.spd;d.x-=d.spd*.12;
+    if(d.y>rainCv.height){d.y=0;d.x=Math.random()*rainCv.width;}
+    if(d.x<0) d.x=rainCv.width;
+  });
+}
+// Lightning
+let nextLightning=Math.random()*8+4;
+function updateLightning(dt){
+  if(!rainActive) return;
+  nextLightning-=dt;
+  if(nextLightning<=0){
+    const l=document.getElementById('LIGHTNING');
+    l.style.opacity='.7';
+    setTimeout(()=>{l.style.opacity='0';},55);
+    setTimeout(()=>{l.style.opacity='.4';},110);
+    setTimeout(()=>{l.style.opacity='0';},160);
+    nextLightning=Math.random()*12+6;
+  }
+}
+window.toggleWeather=function(){
+  rainActive=!rainActive;
+  if(rainActive){
+    rainIntensity=0;
+    const ramp=setInterval(()=>{rainIntensity=Math.min(rainIntensity+.05,1);if(rainIntensity>=1)clearInterval(ramp);},50);
+    notify('RAIN INCOMING — VICE CITY STYLE');
+    // Darken scene
+    ambLight.intensity=.35;scene.fog=new THREE.FogExp2(0x0a0818,.022);
+  } else {
+    rainIntensity=0;
+    notify('CLEAR SKIES');
+    updateSky();updateLighting();
+  }
+  document.getElementById('WBTN').textContent=rainActive?'☀ CLEAR':'☁ WEATHER';
+};
+window.toggleWeatherKey=function(){toggleWeather();};
+
+// ── DAY/NIGHT ─────────────────────────────────────────
+let dayTime=0.72;
+function skyColor(t){
+  if(t<.15||t>.9) return {sky:0x020008,hor:0x1a0035,fog:0x0a0020};
+  if(t<.25) return {sky:0x1a0040,hor:0xe84393,fog:0x3a0060};
+  if(t<.45) return {sky:0x87CEEB,hor:0xffd4a0,fog:0x5a9ec8};
+  if(t<.60) return {sky:0x4ca3dd,hor:0x87ceeb,fog:0x3a8ab8};
+  if(t<.75) return {sky:0x1a0035,hor:0xe84393,fog:0x3a0060};
+  return {sky:0x050015,hor:0x6b0050,fog:0x150025};
+}
+const skyCan=document.createElement('canvas');skyCan.width=4;skyCan.height=512;
+const skyCtx=skyCan.getContext('2d');
+const skyTex=new THREE.CanvasTexture(skyCan);
+const skyMesh=new THREE.Mesh(new THREE.SphereGeometry(500,16,8),new THREE.MeshBasicMaterial({map:skyTex,side:THREE.BackSide,depthWrite:false}));
+scene.add(skyMesh);
+function updateSky(){
+  if(rainActive) return;
+  const c=skyColor(dayTime);
+  const sc=new THREE.Color(c.sky),hc=new THREE.Color(c.hor);
+  const g=skyCtx.createLinearGradient(0,0,0,512);
+  g.addColorStop(0,`#${sc.getHexString()}`);
+  g.addColorStop(.45,`#${hc.getHexString()}`);
+  g.addColorStop(1,`#${hc.clone().lerp(sc,.5).getHexString()}`);
+  skyCtx.fillStyle=g;skyCtx.fillRect(0,0,4,512);
+  skyTex.needsUpdate=true;
+  scene.fog=new THREE.FogExp2(c.fog,.016);
+  renderer.toneMappingExposure=dayTime>.2&&dayTime<.85?1.1:.7;
+}
+updateSky();
+
+// Stars
+const starGeo=new THREE.BufferGeometry();
+const sv=[];for(let i=0;i<1800;i++){const r=480,t=Math.random()*Math.PI*2,p=Math.random()*Math.PI*.55;sv.push(r*Math.sin(p)*Math.cos(t),60+r*Math.cos(p),r*Math.sin(p)*Math.sin(t));}
+starGeo.setAttribute('position',new THREE.Float32BufferAttribute(sv,3));
+const starPts=new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:.6,transparent:true,opacity:.9}));
+scene.add(starPts);
+const sunMesh=new THREE.Mesh(new THREE.SphereGeometry(8,16,8),new THREE.MeshBasicMaterial({color:0xFFCC66}));
+scene.add(sunMesh);
+
+// ── LIGHTING ─────────────────────────────────────────
+const ambLight=new THREE.AmbientLight(0x220030,1.0);scene.add(ambLight);
+const sunLight=new THREE.DirectionalLight(0xff9966,.8);
+sunLight.position.set(-80,100,40);sunLight.castShadow=true;
+sunLight.shadow.mapSize.width=sunLight.shadow.mapSize.height=1024;
+sunLight.shadow.camera.left=sunLight.shadow.camera.bottom=-150;
+sunLight.shadow.camera.right=sunLight.shadow.camera.top=150;
+sunLight.shadow.camera.far=300;scene.add(sunLight);
+const hemi=new THREE.HemisphereLight(0xff6699,0x003366,.5);scene.add(hemi);
+
+function updateLighting(){
+  if(rainActive) return;
+  const d=dayTime,isDay=d>.22&&d<.88,isDusk=d>.65&&d<.85;
+  ambLight.intensity=isDay?(isDusk?.6:.9):.25;
+  ambLight.color.set(isDusk?0x661133:(isDay?0x334466:0x110022));
+  sunLight.intensity=isDay?(isDusk?.6:.8):.05;
+  hemi.intensity=isDusk?.8:(isDay?.4:.15);
+  starPts.material.opacity=d<.2||d>.85?1:d<.3?1-(d-.2)/.1:d>.75?(d-.75)/.1:0;
+  const ang=(d-.25)*Math.PI*1.5;
+  sunMesh.position.set(Math.cos(ang)*200,Math.sin(ang)*120,50);
+  sunMesh.visible=d>.18&&d<.88;
+  sunMesh.material.color.set(d<.3||d>.75?0xFF6633:0xFFCC66);
+}
+
+// ── HELPERS ──────────────────────────────────────────
+const M=THREE.MathUtils;
+function mat(c,e,ei=0,r=.7,m=.1){return new THREE.MeshStandardMaterial({color:c,emissive:e||c,emissiveIntensity:ei,roughness:r,metalness:m});}
+function boxAt(w,h,d,mat,x,y,z,ry=0){const mesh=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);mesh.position.set(x,y,z);mesh.rotation.y=ry;mesh.castShadow=mesh.receiveShadow=true;scene.add(mesh);return mesh;}
+function cylAt(rt,rb,h,s,mat,x,y,z){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,s),mat);m.position.set(x,y,z);m.castShadow=true;scene.add(m);return m;}
+function ptLight(c,i,d,x,y,z){const l=new THREE.PointLight(c,i,d);l.position.set(x,y,z);scene.add(l);return l;}
+
+// ── GROUND / OCEAN ────────────────────────────────────
+const roadMatE=new THREE.MeshStandardMaterial({color:0x0c0c18,roughness:.95});
+const groundE=new THREE.Mesh(new THREE.BoxGeometry(120,0.3,260),roadMatE);groundE.position.set(80,-.15,0);groundE.receiveShadow=true;scene.add(groundE);
+const groundW=new THREE.Mesh(new THREE.BoxGeometry(120,0.3,260),roadMatE);groundW.position.set(-80,-.15,0);groundW.receiveShadow=true;scene.add(groundW);
+
+// Neon road reflections (mirror plane on ground)
+const reflMatE=new THREE.MeshStandardMaterial({color:0xFF1493,emissive:0xFF1493,emissiveIntensity:.04,roughness:.1,metalness:.5,transparent:true,opacity:.18});
+const reflE=new THREE.Mesh(new THREE.BoxGeometry(120,.01,260),reflMatE);reflE.position.set(80,.01,0);scene.add(reflE);
+const reflMatW=new THREE.MeshStandardMaterial({color:0x00CED1,emissive:0x00CED1,emissiveIntensity:.04,roughness:.1,metalness:.5,transparent:true,opacity:.15});
+const reflW=new THREE.Mesh(new THREE.BoxGeometry(120,.01,260),reflMatW);reflW.position.set(-80,.01,0);scene.add(reflW);
+
+const grassM=mat(0x1a4a1a,0x112211,.05,.9);
+function grassPatch(x,z,w,d){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.12,d),grassM);m.position.set(x,.06,z);scene.add(m);}
+const oceanMat=new THREE.MeshStandardMaterial({color:0x004080,roughness:.05,metalness:.25,transparent:true,opacity:.9});
+const ocean=new THREE.Mesh(new THREE.PlaneGeometry(60,280),oceanMat);ocean.rotation.x=-Math.PI/2;ocean.position.set(0,.3,0);scene.add(ocean);
+const deepOcean=new THREE.Mesh(new THREE.PlaneGeometry(800,800),new THREE.MeshStandardMaterial({color:0x002255,roughness:.1,metalness:.2}));
+deepOcean.rotation.x=-Math.PI/2;deepOcean.position.set(0,.1,0);scene.add(deepOcean);
+const sandM=mat(0xd4a55a,0xb8903a,.02,1);
+const beach=new THREE.Mesh(new THREE.BoxGeometry(30,.25,260),sandM);beach.position.set(155,.125,0);beach.receiveShadow=true;scene.add(beach);
+ptLight(0xFFAA44,.4,40,155,2,0);
+
+// ── ROADS ─────────────────────────────────────────────
+const roadM=mat(0x101018,null,0,.95);
+function road(x,z,w,d){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.1,d),roadM);m.position.set(x,.05,z);m.receiveShadow=true;scene.add(m);}
+road(80,0,8,260);road(60,0,8,260);road(40,0,8,260);
+road(80,0,120,8);road(80,40,120,8);road(80,-40,120,8);road(80,80,120,8);road(80,-80,120,8);road(80,-110,120,8);
+road(-80,0,8,260);road(-60,0,8,260);road(-40,0,8,260);
+road(-80,50,120,8);road(-80,-50,120,8);road(-80,0,120,8);road(-80,100,120,8);road(-80,-100,120,8);
+function roadLine(x,z,w,d){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),new THREE.MeshBasicMaterial({color:0xFFCC00}));m.rotation.x=-Math.PI/2;m.position.set(x,.12,z);scene.add(m);}
+for(let z=-120;z<120;z+=12){roadLine(80,z,.2,8);roadLine(60,z,.2,8);roadLine(40,z,.2,8);}
+for(let z=-120;z<120;z+=12){roadLine(-80,z,.2,8);roadLine(-60,z,.2,8);roadLine(-40,z,.2,8);}
+for(let x=20;x<140;x+=12){roadLine(x,40,8,.2);roadLine(x,-40,8,.2);roadLine(x,80,8,.2);}
+for(let x=-140;x<-20;x+=12){roadLine(x,50,8,.2);roadLine(x,-50,8,.2);}
+const swM=mat(0x1a1a2e,null,0,.9);
+function sw(x,z,w,d){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.15,d),swM);m.position.set(x,.075,z);m.receiveShadow=true;scene.add(m);}
+sw(80,0,120,6);sw(60,0,6,260);sw(40,0,6,260);sw(-80,0,120,6);sw(-60,0,6,260);sw(-40,0,6,260);
+grassPatch(50,0,4,260);grassPatch(70,0,4,260);grassPatch(-50,0,4,260);grassPatch(-70,0,4,260);
+
+// ── BRIDGES ──────────────────────────────────────────
+const bridgeM=mat(0x2a2a3a,null,0,.7,.3);
+function bridge(z){
+  const b=new THREE.Mesh(new THREE.BoxGeometry(22,.8,18),bridgeM);b.position.set(0,.4,z);b.castShadow=true;b.receiveShadow=true;scene.add(b);
+  for(let s of[-10,10]){const r=new THREE.Mesh(new THREE.BoxGeometry(.3,1.2,18),mat(0x555566,null,0,.5,.5));r.position.set(s,.8,z);scene.add(r);}
+  const br=new THREE.Mesh(new THREE.BoxGeometry(18,.1,18),roadM);br.position.set(0,.85,z);scene.add(br);
+  roadLine(0,z,.2,16);
+  for(let bz=z-8;bz<=z+8;bz+=8){for(let s of[-9,9]){ptLight(0xFFAA44,.8,10,s,4,bz);}}
+}
+bridge(-20);bridge(20);
+
+// ── TRAFFIC LIGHTS ───────────────────────────────────
+const trafficLights=[];
+function makeTrafficLight(x,z){
+  const polM=mat(0x444455,null,0,.5,.5);cylAt(.06,.06,5,8,polM,x,2.5,z);
+  const housing=new THREE.Mesh(new THREE.BoxGeometry(.35,.9,.25),mat(0x222233,null,0,.5));housing.position.set(x,5.2,z);scene.add(housing);
+  const rL=new THREE.Mesh(new THREE.SphereGeometry(.1,8,8),mat(0xFF2200,0xFF2200,2));rL.position.set(x,5.5,z+.13);scene.add(rL);
+  const yL=new THREE.Mesh(new THREE.SphereGeometry(.1,8,8),mat(0x886600,0xFFCC00,0));yL.position.set(x,5.2,z+.13);scene.add(yL);
+  const gL=new THREE.Mesh(new THREE.SphereGeometry(.1,8,8),mat(0x006622,0x00FF44,0));gL.position.set(x,4.9,z+.13);scene.add(gL);
+  const tl={x,z,red:rL,yellow:yL,green:gL,state:'red',timer:0,cycle:[{s:'red',d:8},{s:'yellow',d:1.5},{s:'green',d:7},{s:'yellow',d:1.5}],ci:0};
+  trafficLights.push(tl);
+  tl.glow=ptLight(0xFF2200,.5,6,x,.5,z+.5);
+  return tl;
+}
+const realTLPos=[[75,40],[85,40],[75,-40],[85,-40],[75,80],[85,80],[75,-80],[85,-80],[35,40],[45,40],[35,-40],[45,-40],[-75,50],[-85,50],[-75,-50],[-85,-50],[-75,0],[-85,0]];
+realTLPos.forEach(([x,z])=>makeTrafficLight(x,z));
+function updateTrafficLights(dt){
+  trafficLights.forEach(tl=>{
+    tl.timer+=dt;const cur=tl.cycle[tl.ci];
+    if(tl.timer>=cur.d){tl.timer=0;tl.ci=(tl.ci+1)%tl.cycle.length;tl.state=tl.cycle[tl.ci].s;}
+    tl.red.material.emissiveIntensity=tl.state==='red'?2:.05;
+    tl.yellow.material.emissiveIntensity=tl.state==='yellow'?2:.05;
+    tl.green.material.emissiveIntensity=tl.state==='green'?2:.05;
+    tl.glow.color.set(tl.state==='red'?0xFF2200:tl.state==='yellow'?0xFFCC00:0x00FF44);
+  });
+}
+
+// ── BUILDINGS ────────────────────────────────────────
+const bldgData=[
+  {id:'about',x:95,z:-90,w:14,h:14,d:12,c:0xFFB3D4,n:0xFF1493,tag:'INTRO',title:'ABOUT ME',
+   body:`Hey — I'm <strong>Sourabh Goyal</strong>, a full-stack developer from <strong>Delhi, India</strong>. B.Tech CSE at HMR Institute of Technology (May 2026), <strong>CGPA 8.4</strong>.<br><br>I build real products end-to-end: AI platforms, enterprise messaging modules, real-time dashboards. 300+ LeetCode problems solved. Always shipping.`,
+   skills:['B.Tech CSE','CGPA 8.4','Delhi, India','Graduating May 2026'],
+   links:[{l:'LINKEDIN',u:'https://linkedin.com/in/sourabhgoyal21',p:true},{l:'GITHUB',u:'https://github.com/SourabhCods'}]},
+
+  {id:'skills',x:95,z:-60,w:14,h:18,d:12,c:0xB3D9FF,n:0x00CED1,tag:'ARSENAL',title:'TECH SKILLS',
+   body:`Full-stack capability across every layer of the stack.`,
+   arch:`<strong>BACKEND:</strong> Java · Spring Boot · Maven · Node.js · Express.js · REST APIs · JWT<br><strong>FRONTEND:</strong> React.js · Next.js 14 · TypeScript · Vite<br><strong>DATABASES:</strong> MongoDB · PostgreSQL · Prisma ORM · Supabase<br><strong>TOOLS:</strong> Git · Vercel · Render · Postman`,
+   skills:['Java','Spring Boot','React.js','Next.js 14','TypeScript','Node.js','Express.js','MongoDB','PostgreSQL','Prisma ORM','Supabase','JWT'],
+   links:[]},
+
+  {id:'exp',x:95,z:-30,w:13,h:12,d:12,c:0xFFE4B3,n:0xFF8C00,tag:'MISSION COMPLETE',title:'KAREXPERT INTERNSHIP',
+   metrics:[{v:'3 months',l:'DURATION'},{v:'June 2025',l:'START'},{v:'Gurugram',l:'LOCATION'},{v:'Java+SB',l:'STACK'}],
+   body:`<strong>Software Dev Intern</strong> at KareXpert Technologies — healthcare SaaS serving hospitals across India.<br><br>Built a <strong>WhatsApp Business API messaging module</strong> for automated hospital-patient communication.`,
+   arch:`<strong>PROBLEM:</strong> Manual patient communication causing delays<br><strong>SOLUTION:</strong> Automated WhatsApp module — Java + Spring Boot<br><strong>ARCHITECTURE:</strong> Controller → Service → DTO → WhatsApp API<br><strong>IMPACT:</strong> Integrated into production healthcare system`,
+   skills:['Java','Spring Boot','Maven','WhatsApp Business API','REST APIs','React.js','DTO Pattern'],
+   links:[]},
+
+  {id:'spyfash',x:95,z:30,w:12,h:22,d:11,c:0xE4B3FF,n:0x9D4EDD,tier:'prod',tag:'PROJECT FILE',title:'SPYFASH',
+   metrics:[{v:'94%',l:'TYPESCRIPT'},{v:'LIVE',l:'STATUS'},{v:'42',l:'COMMITS'},{v:'Next.js 14',l:'FRAMEWORK'}],
+   body:`Company assessment — <strong>deployed live</strong> at spyfash.onrender.com. Full type safety across the stack.`,
+   arch:`<strong>ARCHITECTURE:</strong> Next.js 14 App Router → Prisma ORM → Supabase PostgreSQL<br><strong>DEPLOYMENT:</strong> Render CI/CD — live in production`,
+   skills:['Next.js 14','TypeScript','Prisma ORM','Supabase','PostgreSQL','Render'],
+   links:[{l:'LIVE DEMO',u:'https://spyfash.onrender.com',p:true},{l:'GITHUB',u:'https://github.com/SourabhCods/spy_fash'}]},
+
+  {id:'quizmind',x:95,z:60,w:12,h:20,d:11,c:0xB3FFD9,n:0x00FF88,tier:'ai',tag:'PROJECT FILE',title:'QUIZMIND AI',
+   metrics:[{v:'Groq',l:'AI ENGINE'},{v:'LLaMA 3.3',l:'MODEL'},{v:'2-PASS',l:'VERIFY'},{v:'3 APIs',l:'ENDPOINTS'}],
+   body:`AI quiz platform powered by <strong>LLaMA 3.3 70B via Groq</strong>. Two-pass answer verification — generates, then independently re-solves every question.`,
+   arch:`<strong>ARCHITECTURE:</strong> React MVP → Express proxy → Groq API<br><strong>ENGINEERING:</strong> /generate-quiz (verified) · /explain · /report<br><strong>INNOVATION:</strong> Difficulty calibration with per-level prompt specs`,
+   skills:['React.js','Express.js','Node.js','Groq API','LLaMA 3.3 70B','Prompt Engineering'],
+   links:[{l:'GITHUB',u:'https://github.com/SourabhCods/QuizMindAI',p:true}]},
+
+  {id:'quiet',x:95,z:90,w:13,h:17,d:11,c:0xFFD4B3,n:0xFF6B35,tier:'prod',tag:'PROJECT FILE',title:'QUIET HOUR SCHEDULER',
+   metrics:[{v:'89%',l:'TYPESCRIPT'},{v:'LIVE',l:'STATUS'},{v:'Next.js 14',l:'FRAMEWORK'},{v:'Vercel',l:'DEPLOYED'}],
+   body:`Live at <strong>quiethourscheduler.vercel.app</strong>. End-to-end type safety, Vercel CI/CD, Supabase backend.`,
+   arch:`<strong>ARCHITECTURE:</strong> Next.js 14 App Router → Prisma → Supabase PostgreSQL<br><strong>DEPLOYMENT:</strong> Vercel with preview deployments on every PR`,
+   skills:['Next.js 14','TypeScript','Prisma ORM','Supabase','PostgreSQL','Vercel'],
+   links:[{l:'LIVE DEMO',u:'https://quiethourscheduler.vercel.app',p:true},{l:'GITHUB',u:'https://github.com/SourabhCods/quiethourscheduler'}]},
+
+  {id:'flash',x:-95,z:-60,w:14,h:38,d:14,c:0xFFB3E8,n:0xFF1493,tier:'best',tag:'PROJECT FILE',title:'FLASHCARD LEARNING APP',
+   metrics:[{v:'SM-2',l:'ALGORITHM'},{v:'JWT',l:'AUTH'},{v:'Full',l:'STACK'},{v:'MongoDB',l:'DATABASE'}],
+   body:`Spaced repetition platform implementing the <strong>SM-2 algorithm</strong> — the same algorithm used by Anki, backed by memory science research. Not a CRUD app.`,
+   arch:`<strong>WHAT IT SOLVES:</strong> Random review order with no memory science<br><strong>CORE:</strong> SM-2 computes ease factor, review interval, and next-review date per card<br><strong>ARCHITECTURE:</strong> React → Express REST API → MongoDB<br><strong>AUTH:</strong> JWT with clean service/controller/DTO separation`,
+   skills:['Node.js','Express.js','React.js','MongoDB','JWT','SM-2 Algorithm','DTO Pattern'],
+   links:[{l:'GITHUB',u:'https://github.com/SourabhCods/FlashCard-Learning-App',p:true}]},
+
+  {id:'stocks',x:-95,z:0,w:14,h:45,d:14,c:0xB3F0FF,n:0x00CED1,tag:'PROJECT FILE',title:'STOCK MARKET DASHBOARD',
+   metrics:[{v:'Real-time',l:'DATA'},{v:'Full TS',l:'STACK'},{v:'Chart.js',l:'VIZ'},{v:'PostgreSQL',l:'DB'}],
+   body:`Full-stack TypeScript financial dashboard consuming <strong>Twelve Data API</strong> for live market data.`,
+   arch:`<strong>ARCHITECTURE:</strong> React (Chart.js) → Express (caching) → Prisma → Supabase PostgreSQL<br><strong>TYPE SAFETY:</strong> Strict TypeScript across client and server`,
+   skills:['React.js','TypeScript','Express.js','Supabase','Prisma ORM','Chart.js','Twelve Data API'],
+   links:[{l:'GITHUB',u:'https://github.com/SourabhCods/stockmarketproject',p:true}]},
+
+  {id:'canbuild',x:-95,z:60,w:16,h:28,d:16,c:0xFFFFB3,n:0xFFFF00,tag:'FOR RECRUITERS',title:'WHAT I CAN BUILD',
+   body:`If you're hiring, here is exactly what I bring to your team on day one.`,
+   arch:`<strong>FULL-STACK APPLICATIONS</strong><br>React/Next.js frontends backed by Spring Boot or Node.js, connected to PostgreSQL or MongoDB — production-ready, typed, tested.<br><br><strong>SCALABLE BACKEND SYSTEMS</strong><br>REST API design with auth (JWT), DTO patterns, service layers, clean separation of concerns.<br><br><strong>AI-INTEGRATED FEATURES</strong><br>LLM integration with prompt engineering and multi-pass verification — not just API wrappers.<br><br><strong>REAL-TIME & DATA HEAVY UIs</strong><br>Dashboards, live data feeds, scheduled systems — Chart.js, polling architectures.<br><br><strong>FAST LEARNER</strong><br>300+ LeetCode. Strong DSA foundation. Comfortable going deep on unfamiliar tech quickly.`,
+   skills:['Full-Stack','Backend Systems','AI Integration','Real-time','API Design','TypeScript','System Design'],
+   links:[{l:'EMAIL ME',u:'mailto:sourabhgoyal560@gmail.com',p:true},{l:'LINKEDIN',u:'https://linkedin.com/in/sourabhgoyal21'}]},
+
+  {id:'contact',x:-95,z:120,w:16,h:22,d:16,c:0xFFD4FF,n:0xFF88FF,tag:'CONNECT',title:'HIT ME UP',
+   body:`Open to <strong>internships</strong>, <strong>full-time SDE roles</strong>, and collaborations.<br><br>I respond to every serious message within 24 hours.`,
+   skills:[],
+   links:[{l:'EMAIL',u:'mailto:sourabhgoyal560@gmail.com',p:true},{l:'LINKEDIN',u:'https://linkedin.com/in/sourabhgoyal21'},{l:'GITHUB',u:'https://github.com/SourabhCods'},{l:'LEETCODE',u:'https://leetcode.com/u/Sourabh_19/'}]},
+];
+
+const bMeshes=[],neonEmissives=[],bldgPos={};
+bldgData.forEach(b=>{
+  bldgPos[b.id]={x:b.x>0?b.x-20:b.x+20,z:b.z};
+  const bM=new THREE.MeshStandardMaterial({color:b.c,roughness:.55,metalness:.05});
+  const body=boxAt(b.w,b.h,b.d,bM,b.x,b.h/2,b.z);
+  body.userData={bid:b.id};bMeshes.push({mesh:body,data:b});
+  const nM=new THREE.MeshStandardMaterial({color:b.n,emissive:b.n,emissiveIntensity:1.8,roughness:.3});
+  boxAt(b.w*.78,1.4,b.d*.78,nM,b.x,b.h+.7,b.z);
+  boxAt(b.w*.55,1.1,b.d*.55,nM,b.x,b.h+1.4+.55,b.z);
+  boxAt(b.w*.35,.7,b.d*.35,nM,b.x,b.h+2.5+.35,b.z);
+  neonEmissives.push(nM);
+  const wM=new THREE.MeshStandardMaterial({color:b.n,emissive:b.n,emissiveIntensity:.5,transparent:true,opacity:.85});
+  const rows=Math.floor(b.h/2.4),cols=Math.floor(b.w/3.2);
+  for(let r=1;r<rows;r++) for(let c=0;c<cols;c++){
+    if(Math.random()>.15){
+      const pw=new THREE.Mesh(new THREE.CircleGeometry(.3,12),wM.clone());
+      pw.material.emissiveIntensity=.3+Math.random()*1.1;
+      pw.position.set(b.x-b.w/2+1.4+c*3,r*2.4-.4,b.z+b.d/2+.06);scene.add(pw);
+      const pwb=pw.clone();pwb.position.set(b.x-b.w/2+1.4+c*3,r*2.4-.4,b.z-b.d/2-.06);pwb.rotation.y=Math.PI;scene.add(pwb);
+    }
+  }
+  for(const ex of[-b.w/2+.1,b.w/2-.1]) for(const ez of[-b.d/2+.1,b.d/2-.1]){
+    const strip=new THREE.Mesh(new THREE.BoxGeometry(.12,b.h,.12),new THREE.MeshStandardMaterial({color:b.n,emissive:b.n,emissiveIntensity:2.2}));
+    strip.position.set(b.x+ex,b.h/2,b.z+ez);scene.add(strip);
+  }
+  const signM=new THREE.MeshStandardMaterial({color:b.n,emissive:b.n,emissiveIntensity:2.8});
+  boxAt(b.w*.65,.7,.1,signM,b.x,3,b.z+b.d/2+.1);
+  const pl=ptLight(b.n,2,20,b.x,b.h*.65,b.z);neonEmissives.push({light:pl,base:2});
+  const halo=new THREE.Mesh(new THREE.CircleGeometry(b.w*.85,32),new THREE.MeshBasicMaterial({color:b.n,transparent:true,opacity:b.tier?0.10:0.06}));
+  halo.rotation.x=-Math.PI/2;halo.position.set(b.x,.02,b.z);scene.add(halo);
+  sw(b.x,b.z,b.w+4,b.d+4);
+});
+
+// ── BILLBOARDS ────────────────────────────────────────
+function billboard(x,z,col,ry=0){
+  const pM=mat(0x444455,null,0,.5,.5);
+  for(const s of[-2.8,2.8]) cylAt(.12,.15,8,8,pM,x+Math.cos(ry)*s,4,z+Math.sin(ry)*s);
+  const brdM=new THREE.MeshStandardMaterial({color:0x050015,emissive:col,emissiveIntensity:.25});
+  boxAt(9,4,.18,brdM,x,7.8,z,ry);
+  const fM=new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:2.5});
+  for(const [bx,by,bw,bh] of[[-4.5,0,.15,4],[4.5,0,.15,4],[0,2,9,.15],[0,-2,9,.15]]){
+    const fr=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,.22),fM);
+    fr.position.set(x+Math.sin(ry)*.15+bx*Math.cos(ry),7.8+by,z+Math.cos(ry)*.15+bx*Math.sin(ry));
+    fr.rotation.y=ry;scene.add(fr);
+  }
+  ptLight(col,.6,14,x,8.5,z);
+}
+billboard(110,-70,0xFF1493);billboard(110,-10,0x00CED1);billboard(110,50,0xFF8C00);billboard(110,100,0x9D4EDD);
+billboard(-110,-70,0x00FF88);billboard(-110,20,0xFFFF00);billboard(-110,90,0xFF1493);
+billboard(0,130,0xFF1493,Math.PI/2);billboard(0,-130,0x00CED1,Math.PI/2);
+
+// ── PALMS ─────────────────────────────────────────────
+function palm(x,z,h=8){
+  const trM=mat(0x6B3A2A,null,.02,.9),lfM=new THREE.MeshStandardMaterial({color:0x1a7a1a,roughness:.7,side:THREE.DoubleSide});
+  let cx=x,cz=z;
+  for(let i=0;i<9;i++){cylAt(.16-.005*i,.2-.005*i,.82,8,trM,cx,i*.82+.41,cz);cx+=Math.sin(i*.3)*.12;cz+=Math.cos(i*.3)*.08;}
+  const ty=h+.6;
+  for(let l=0;l<8;l++){const a=(l/8)*Math.PI*2;const lf=new THREE.Mesh(new THREE.PlaneGeometry(.45,3),lfM);lf.position.set(x+Math.cos(a)*1.6,ty,z+Math.sin(a)*1.6);lf.rotation.y=-a;lf.rotation.z=-.45;scene.add(lf);}
+  const coM=mat(0x3a2510,null,.05,.8);
+  for(let c=0;c<3;c++){const a=(c/3)*Math.PI*2;const co=new THREE.Mesh(new THREE.SphereGeometry(.15,8,8),coM);co.position.set(x+Math.cos(a)*.35,ty-.45,z+Math.sin(a)*.35);scene.add(co);}
+}
+for(let z=-120;z<120;z+=10){palm(72,z,7+Math.random()*2);palm(88,z,7+Math.random()*2);}
+for(let z=-120;z<120;z+=14) palm(52,z,6+Math.random()*2);
+[[-35,30],[35,30],[-35,-30],[35,-30],[110,-30],[110,10],[-110,-30],[-110,30],[20,-100],[20,100]].forEach(([x,z])=>palm(x,z,6+Math.random()*3));
+
+// ── STREET LIGHTS ─────────────────────────────────────
+const streetLightMeshes=[];
+function streetLight(x,z,col=0xFF1493){
+  const pM=mat(0x7a7a8a,.1,0,.4,.6);
+  cylAt(.07,.09,6,8,pM,x,3,z);
+  const arm=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,2.2,8),pM);arm.rotation.z=Math.PI/2;arm.position.set(x,6.1,z+1.0);scene.add(arm);
+  const fixM=new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:3});
+  boxAt(.55,.18,.35,fixM,x,6,z+2.2);
+  const light=ptLight(col,1.6,18,x,5.5,z+2.3);
+  streetLightMeshes.push({light,col,base:1.6});
+}
+for(let z=-110;z<=110;z+=16){streetLight(74,z,0xFF1493);streetLight(86,z,0x00CED1);}
+for(let z=-110;z<=110;z+=18){streetLight(54,z,0xFF8C00);streetLight(-74,z,0xFF1493);streetLight(-86,z,0x9D4EDD);}
+for(let x=-110;x<=110;x+=20){streetLight(x,44,0xFF1493);streetLight(x,-44,0x00CED1);}
+
+// Phone booths
+function phoneBooth(x,z){
+  const fM=mat(0xFF1493,0xFF1493,.4,.3,.3);
+  boxAt(.75,2.1,.06,fM,x,1.05,z);
+  const glM=new THREE.MeshStandardMaterial({color:0x88DDFF,transparent:true,opacity:.4});
+  boxAt(.64,1.75,.04,glM,x,1.05,z+.04);
+  ptLight(0xFF1493,.4,5,x,2.1,z);
+}
+[[-70,30],[70,-30],[130,60],[130,-60],[-130,0],[-130,80],[130,-10],[130,80]].forEach(([x,z])=>phoneBooth(x,z));
+
+// ── NPC CARS ──────────────────────────────────────────
+const CAR_SPECS={
+  cheetah:{w:2,h:.6,d:4.5,color:0xFF2200,type:'sports',baseH:.4},
+  comet:  {w:1.8,h:.6,d:4.0,color:0x3366FF,type:'sports',baseH:.38},
+  infernus:{w:2,h:.5,d:4.5,color:0xFFCC00,type:'sports',baseH:.35},
+  banshee:{w:1.9,h:.58,d:4.2,color:0xFFFFFF,type:'sports',baseH:.38},
+  stallion:{w:2.1,h:.7,d:4.8,color:0x8833CC,type:'muscle',baseH:.42},
+  sentinel:{w:1.9,h:.72,d:4.3,color:0x334455,type:'sedan',baseH:.44},
+  taxi:   {w:1.9,h:.75,d:4.3,color:0xFFCC00,type:'sedan',baseH:.44},
+  cop:    {w:2.0,h:.76,d:4.5,color:0x111188,type:'sedan',baseH:.44},
+};
+function makeNPCCar(spec,sx,sz,axis,dir){
+  const g=new THREE.Group();
+  const{w,h,d,color,type,baseH}=spec;
+  const cM=new THREE.MeshStandardMaterial({color,roughness:.2,metalness:.7});
+  const dkM=new THREE.MeshStandardMaterial({color:new THREE.Color(color).multiplyScalar(.75),roughness:.25,metalness:.65});
+  const glM=new THREE.MeshStandardMaterial({color:0x88BBDD,transparent:true,opacity:.55,roughness:.05});
+  const wM=new THREE.MeshStandardMaterial({color:0x111111,roughness:.9});
+  const rM=new THREE.MeshStandardMaterial({color:0xCCCCCC,roughness:.15,metalness:.9});
+  const body=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),cM);body.position.y=baseH;g.add(body);
+  const cabH=type==='sports'?.45:type==='muscle'?.52:.55;
+  const cab=new THREE.Mesh(new THREE.BoxGeometry(w*.85,cabH,d*.45),dkM);
+  cab.position.set(0,baseH+h*.5+cabH*.5-.05,type==='sports'?.1:0);g.add(cab);
+  const wf=new THREE.Mesh(new THREE.BoxGeometry(w*.82,.38,.05),glM);wf.position.set(0,baseH+h*.5+cabH*.4,d*.22);wf.rotation.x=-.22;g.add(wf);
+  const hlM=new THREE.MeshStandardMaterial({color:0xFFFFBB,emissive:0xFFFFBB,emissiveIntensity:3});
+  const tlM=new THREE.MeshStandardMaterial({color:0xFF1100,emissive:0xFF1100,emissiveIntensity:2.5});
+  for(const s of[-.65,.65]){
+    const hl=new THREE.Mesh(new THREE.BoxGeometry(.25,.14,.06),hlM);hl.position.set(s*.9,baseH+.08,d*.5+.06);g.add(hl);
+    const tl2=new THREE.Mesh(new THREE.BoxGeometry(.28,.14,.06),tlM);tl2.position.set(s*.9,baseH+.08,-d*.5-.06);g.add(tl2);
+  }
+  const wps=[[-.95,baseH-.05,d*.35],[.95,baseH-.05,d*.35],[-.95,baseH-.05,-d*.35],[.95,baseH-.05,-d*.35]];
+  const wgs=[];
+  wps.forEach(([wx,wy,wz])=>{
+    const wg=new THREE.Group();
+    const t=new THREE.Mesh(new THREE.CylinderGeometry(.28,.28,.2,14),wM);t.rotation.z=Math.PI/2;wg.add(t);
+    const r2=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.22,8),rM);r2.rotation.z=Math.PI/2;wg.add(r2);
+    wg.position.set(wx,wy,wz);g.add(wg);wgs.push(wg);
+  });
+  if(type==='sports'){
+    const ug2=new THREE.Mesh(new THREE.PlaneGeometry(w*.8,d*.8),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.5}));ug2.rotation.x=-Math.PI/2;ug2.position.y=.04;g.add(ug2);
+  }
+  g.position.set(sx,.05,sz);
+  g.rotation.y=axis==='z'?(dir>0?0:Math.PI):(dir>0?-Math.PI/2:Math.PI/2);
+  scene.add(g);
+  return{group:g,wgs,axis,dir,speed:.18+Math.random()*.14,stopTimer:0,stopped:false,type};
+}
+const npcCars=[];
+const lanes=[
+  {axis:'z',lane:77,dir:1},{axis:'z',lane:83,dir:-1},
+  {axis:'z',lane:57,dir:1},{axis:'z',lane:63,dir:-1},
+  {axis:'x',lane:37,dir:1},{axis:'x',lane:43,dir:-1},
+  {axis:'z',lane:-77,dir:1},{axis:'z',lane:-83,dir:-1},
+  {axis:'z',lane:-57,dir:1},{axis:'z',lane:-63,dir:-1},
+  {axis:'x',lane:-83,dir:1},{axis:'x',lane:-77,dir:-1},
+];
+const carTypes=Object.keys(CAR_SPECS);
+lanes.forEach(ln=>{
+  const count=4+Math.floor(Math.random()*3);
+  for(let i=0;i<count;i++){
+    const pos=-100+i*(200/count)+Math.random()*20-10;
+    const ctype=carTypes[Math.floor(Math.random()*carTypes.length)];
+    const spec={...CAR_SPECS[ctype]};
+    if(Math.random()>.6) spec.color=[0xFF2200,0x3366FF,0xFFCC00,0xFFFFFF,0x00CC66,0x993399,0xFF6600,0x333333][Math.floor(Math.random()*8)];
+    npcCars.push(makeNPCCar(spec,ln.axis==='z'?ln.lane:pos,ln.axis==='z'?pos:ln.lane,ln.axis,ln.dir));
+  }
+});
+
+// ── PEDESTRIANS ───────────────────────────────────────
+const PEDS=[];
+const pedOutfits=[{body:0xFF6B9D,legs:0xFFFFFF},{body:0x87CEEB,legs:0xFFE4B5},{body:0xFFD700,legs:0x8B4513},{body:0xFF4500,legs:0x1a1a1a},{body:0x00CED1,legs:0xFFFFFF},{body:0x9D4EDD,legs:0x222222},{body:0xFF1493,legs:0xFFE4B5}];
+function makePed(x,z){
+  const g=new THREE.Group();
+  const of=pedOutfits[Math.floor(Math.random()*pedOutfits.length)];
+  const bM=mat(of.body,null,.05,.7),lM=mat(of.legs,null,.02,.8),skM=mat(0xFFDBAC,null,.02,.8);
+  const torso=new THREE.Mesh(new THREE.BoxGeometry(.32,.5,.22),bM);torso.position.y=.7;g.add(torso);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.17,8,8),skM);head.position.y=1.13;g.add(head);
+  const sgM=mat(0x111111,null,.05,.3,.3);
+  for(const s of[-.07,.07]){const sg=new THREE.Mesh(new THREE.BoxGeometry(.06,.04,.02),sgM);sg.position.set(s,1.16,.16);g.add(sg);}
+  for(const s of[-1,1]){const arm=new THREE.Mesh(new THREE.BoxGeometry(.1,.38,.12),bM);arm.position.set(s*.21,.68,0);arm.rotation.z=s*.15;g.add(arm);}
+  const la=new THREE.Mesh(new THREE.BoxGeometry(.12,.44,.12),lM);la.position.set(-.09,.22,0);g.add(la);
+  const lb=new THREE.Mesh(new THREE.BoxGeometry(.12,.44,.12),lM);lb.position.set(.09,.22,0);g.add(lb);
+  g.position.set(x,.05,z);scene.add(g);
+  const a=Math.random()*Math.PI*2;
+  return{group:g,vx:Math.cos(a)*.05,vz:Math.sin(a)*.05,phase:Math.random()*Math.PI*2,timer:0,la,lb};
+}
+for(let z=-100;z<100;z+=9){PEDS.push(makePed(69+Math.random()*3,z+Math.random()*4));PEDS.push(makePed(91+Math.random()*3,z+Math.random()*4));}
+for(let i=0;i<28;i++) PEDS.push(makePed(40+Math.random()*120-60,Math.random()*200-100));
+for(let i=0;i<18;i++) PEDS.push(makePed(-40-Math.random()*80,Math.random()*200-100));
+
+// ── PLAYER CAR ────────────────────────────────────────
+const PLAYER=new THREE.Group();scene.add(PLAYER);
+const pcM=new THREE.MeshStandardMaterial({color:0xFF1493,emissive:0xCC0066,emissiveIntensity:.25,roughness:.15,metalness:.85});
+const pcDk=mat(0xCC0055,null,.1,.2,.75);
+const pcGl=new THREE.MeshStandardMaterial({color:0x88BBDD,transparent:true,opacity:.55,roughness:.05});
+const pcWh=mat(0x111111,null,0,.9),pcRm=mat(0xDDDDDD,null,.1,.15,.95);
+const pcHl=new THREE.MeshStandardMaterial({color:0xFFFFBB,emissive:0xFFFFBB,emissiveIntensity:4});
+const pcTl=new THREE.MeshStandardMaterial({color:0xFF1100,emissive:0xFF1100,emissiveIntensity:3});
+const pcBody=new THREE.Mesh(new THREE.BoxGeometry(2,.72,4.4),pcM);pcBody.position.y=.44;PLAYER.add(pcBody);
+const pcCab=new THREE.Mesh(new THREE.BoxGeometry(1.72,.55,2.1),pcDk);pcCab.position.set(0,1.03,.08);PLAYER.add(pcCab);
+const pcWf=new THREE.Mesh(new THREE.BoxGeometry(1.68,.46,.05),pcGl);pcWf.position.set(0,.98,1.06);pcWf.rotation.x=-.26;PLAYER.add(pcWf);
+const pcWr=new THREE.Mesh(new THREE.BoxGeometry(1.68,.4,.05),pcGl);pcWr.position.set(0,.95,-.96);pcWr.rotation.x=.2;PLAYER.add(pcWr);
+for(const s of[-1,1]){const sw2=new THREE.Mesh(new THREE.BoxGeometry(.04,.35,.9),pcGl);sw2.position.set(s*.87,.95,.08);PLAYER.add(sw2);}
+const hood=new THREE.Mesh(new THREE.BoxGeometry(1.85,.22,1.4),pcDk);hood.position.set(0,.78,1.5);PLAYER.add(hood);
+const rLid=new THREE.Mesh(new THREE.BoxGeometry(1.85,.2,1.1),pcDk);rLid.position.set(0,.78,-1.65);PLAYER.add(rLid);
+const spl=new THREE.Mesh(new THREE.BoxGeometry(1.95,.07,.55),pcDk);spl.position.set(0,.9,-2.05);PLAYER.add(spl);
+for(const s of[-.85,.85]){const sp2=new THREE.Mesh(new THREE.BoxGeometry(.1,.28,.5),pcDk);sp2.position.set(s,.8,-2.05);PLAYER.add(sp2);}
+for(const s of[-1,1]){const sk=new THREE.Mesh(new THREE.BoxGeometry(.08,.2,3.8),pcDk);sk.position.set(s*.98,.22,0);PLAYER.add(sk);}
+boxAt(2.0,.34,.16,pcDk,0,.34,2.22);boxAt(2.0,.34,.16,pcDk,0,.34,-2.22);
+for(const s of[-.66,.66]){
+  const hl=new THREE.Mesh(new THREE.CircleGeometry(.18,12),pcHl);hl.position.set(s,.5,2.21);PLAYER.add(hl);
+  const hlr=new THREE.Mesh(new THREE.RingGeometry(.15,.2,12),pcDk);hlr.position.set(s,.5,2.22);PLAYER.add(hlr);
+}
+for(const s of[-.7,.7]){const tl2=new THREE.Mesh(new THREE.BoxGeometry(.3,.14,.06),pcTl);tl2.position.set(s,.48,-2.21);PLAYER.add(tl2);}
+const ctb=new THREE.Mesh(new THREE.BoxGeometry(1.0,.08,.06),pcTl);ctb.position.set(0,.4,-2.21);PLAYER.add(ctb);
+const pwgs=[];
+[[-.98,.3,1.45],[.98,.3,1.45],[-.98,.3,-1.45],[.98,.3,-1.45]].forEach(([wx,wy,wz])=>{
+  const wg=new THREE.Group();
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,.22,16),pcWh);t.rotation.z=Math.PI/2;wg.add(t);
+  const r2=new THREE.Mesh(new THREE.CylinderGeometry(.19,.19,.24,10),pcRm);r2.rotation.z=Math.PI/2;wg.add(r2);
+  for(let sp=0;sp<5;sp++){const s2=new THREE.Mesh(new THREE.BoxGeometry(.03,.28,.04),pcRm);s2.rotation.z=(sp/5)*Math.PI*2;wg.add(s2);}
+  wg.position.set(wx,wy,wz);PLAYER.add(wg);pwgs.push(wg);
+});
+const ug=new THREE.Mesh(new THREE.PlaneGeometry(1.7,4),new THREE.MeshBasicMaterial({color:0xFF1493,transparent:true,opacity:.55}));
+ug.rotation.x=-Math.PI/2;ug.position.y=.06;PLAYER.add(ug);
+const carGlow=ptLight(0xFF1493,1.2,8,0,.1,0);PLAYER.add(carGlow);
+const hlBeam=ptLight(0xFFFFAA,2,20,0,.5,3);PLAYER.add(hlBeam);
+PLAYER.position.set(80,.05,0);PLAYER.castShadow=true;
+
+// ── CAMERA ────────────────────────────────────────────
+let camH=0,camV=.3,camDist=11,camMode=0;
+const camTarget=new THREE.Vector3();
+function updateCamera(){
+  const ry=PLAYER.rotation.y+camH;
+  const d=camMode===1?18:camMode===2?14:camDist;
+  const v=camMode===1?.8:camV;
+  camera.position.lerp(new THREE.Vector3(PLAYER.position.x-Math.sin(ry)*d,PLAYER.position.y+3.5+v*8,PLAYER.position.z-Math.cos(ry)*d),.08);
+  camTarget.set(PLAYER.position.x,PLAYER.position.y+.8,PLAYER.position.z);
+  camera.lookAt(camTarget);
+}
+
+// ── INPUT ─────────────────────────────────────────────
+const K={};
+window.addEventListener('keydown',e=>{
+  K[e.code]=true;
+  if(!audioStarted) initAudio();
+  if(e.code==='KeyC'){camMode=(camMode+1)%3;notify('CAM: '+(camMode===0?'FOLLOW':camMode===1?'HIGH':'CINEMATIC'));}
+  if(e.code==='KeyN'){dayTime=M.clamp(dayTime-.1,0,1);updateSky();updateLighting();}
+  if(e.code==='KeyM'){dayTime=M.clamp(dayTime+.1,0,1);updateSky();updateLighting();}
+  if(e.code==='KeyP') toggleWeather();
+});
+window.addEventListener('keyup',e=>K[e.code]=false);
+let isDrag=false,lmx=0,lmy=0;
+window.addEventListener('mousedown',e=>{isDrag=true;lmx=e.clientX;lmy=e.clientY;if(!audioStarted)initAudio();});
+window.addEventListener('mouseup',()=>isDrag=false);
+window.addEventListener('mousemove',e=>{
+  if(!isDrag)return;
+  camH+=(e.clientX-lmx)*.006;camV=M.clamp(camV+(e.clientY-lmy)*.004,-.2,.85);lmx=e.clientX;lmy=e.clientY;
+});
+window.addEventListener('wheel',e=>{camDist=M.clamp(camDist+e.deltaY*.015,5,24);});
+const CUR=document.getElementById('CUR');
+window.addEventListener('mousemove',e=>{CUR.style.left=e.clientX+'px';CUR.style.top=e.clientY+'px';});
+window.addEventListener('mousedown',()=>{CUR.style.background='#00CED1';CUR.style.boxShadow='0 0 10px #00CED1';});
+window.addEventListener('mouseup',()=>{CUR.style.background='#FF1493';CUR.style.boxShadow='0 0 8px #FF1493';});
+
+// ── PHYSICS ───────────────────────────────────────────
+let spd=0,maxSpd=.48,acc=.016,fric=.962,trn=.044;
+const BOUND=140;
+
+// ── WANTED SYSTEM ─────────────────────────────────────
+let wantedLevel=0,wantedTimer=0;
+function addWanted(n=1){
+  wantedLevel=Math.min(wantedLevel+n,5);
+  updateWantedHUD();
+  wantedTimer=8;
+  if(wantedLevel>=3) notify('WANTED LEVEL '+wantedLevel+' — VICE CITY PD ON YOUR TAIL');
+}
+function updateWantedHUD(){
+  document.querySelectorAll('#WANTED i').forEach((s,i)=>{
+    s.classList.toggle('on',i<wantedLevel);
+    s.classList.toggle('flash',i<wantedLevel&&wantedLevel>=4);
+  });
+}
+function updateWanted(dt){
+  if(wantedLevel>0){
+    wantedTimer-=dt;
+    if(wantedTimer<=0){
+      wantedLevel=Math.max(wantedLevel-1,0);
+      updateWantedHUD();
+      wantedTimer=6;
+    }
+  }
+  // Speed = wanted
+  if(Math.abs(spd)>maxSpd*.85&&frame%120===0&&Math.random()>.5) addWanted(1);
+}
+
+// ── NPC AI ─────────────────────────────────────────────
+function isRedLight(x,z,axis,dir){
+  for(const tl of trafficLights){
+    if(tl.state!=='red') continue;
+    const dx=x-tl.x,dz=z-tl.z;
+    if(Math.sqrt(dx*dx+dz*dz)>12) continue;
+    if(axis==='z'&&Math.abs(dx)<4&&dz*dir>0&&dz*dir<10) return true;
+    if(axis==='x'&&Math.abs(dz)<4&&dx*dir>0&&dx*dir<10) return true;
+  }
+  return false;
+}
+function updateNPCs(dt){
+  npcCars.forEach(c=>{
+    const pos=c.group.position;
+    if(isRedLight(pos.x,pos.z,c.axis,c.dir)){c.stopped=true;c.stopTimer=0;}
+    else if(c.stopped){c.stopTimer+=dt;if(c.stopTimer>.5)c.stopped=false;}
+    if(!c.stopped){
+      const mv=c.speed*dt*60;
+      if(c.axis==='z') pos.z+=c.dir*mv; else pos.x+=c.dir*mv;
+      c.wgs.forEach(wg=>{wg.children[0].rotation.x+=c.dir*.2;});
+    }
+    if(c.axis==='z'){if(pos.z>125)pos.z=-125;if(pos.z<-125)pos.z=125;}
+    else{if(pos.x>145)pos.x=-145;if(pos.x<-145)pos.x=145;}
+    // Collision with player = wanted
+    const dx=pos.x-PLAYER.position.x,dz=pos.z-PLAYER.position.z;
+    if(Math.sqrt(dx*dx+dz*dz)<4&&Math.abs(spd)>.1&&frame%30===0) addWanted(1);
+  });
+}
+function updatePeds(dt){
+  PEDS.forEach(p=>{
+    p.phase+=dt*3;p.timer+=dt;
+    p.group.position.x+=p.vx;p.group.position.z+=p.vz;
+    p.la.rotation.x=Math.sin(p.phase)*.5;p.lb.rotation.x=-Math.sin(p.phase)*.5;
+    if(p.timer>2.5+Math.random()*4){const a=Math.random()*Math.PI*2;p.vx=Math.cos(a)*.05;p.vz=Math.sin(a)*.05;p.group.rotation.y=a;p.timer=0;}
+    if(p.group.position.x>145||p.group.position.x<-145||p.group.position.z>130||p.group.position.z<-130){p.vx*=-1;p.vz*=-1;p.group.rotation.y+=Math.PI;}
+    const dx=p.group.position.x-PLAYER.position.x,dz=p.group.position.z-PLAYER.position.z;
+    const d=Math.sqrt(dx*dx+dz*dz);
+    if(d<6&&d>.1){p.vx=dx/d*.12;p.vz=dz/d*.12;}
+  });
+}
+
+// ── WAVES ─────────────────────────────────────────────
+const waveObjs=[];
+for(let i=0;i<5;i++){
+  const wv=new THREE.Mesh(new THREE.PlaneGeometry(60,5),new THREE.MeshStandardMaterial({color:0x0066BB,transparent:true,opacity:.35+i*.04,roughness:.05}));
+  wv.rotation.x=-Math.PI/2;wv.position.set(0,.3+i*.04,-100+i*50);scene.add(wv);
+  waveObjs.push({m:wv,spd:.2+i*.04});
+}
+
+// ── PANEL ─────────────────────────────────────────────
+let panelOpen=false;
+window.closeP=function(){document.getElementById('PNL').classList.remove('open');panelOpen=false;};
+function buildBadge(tier){if(!tier)return '';const map={best:'BEST PROJECT',prod:'PRODUCTION',ai:'AI PROJECT'};return `<span class="ptag-badge ${tier}">${map[tier]}</span>`;}
+function buildMetrics(m){if(!m||!m.length)return '';return `<div class="pmetrics">${m.map(x=>`<div class="pmet"><div class="mv">${x.v}</div><div class="ml">${x.l}</div></div>`).join('')}</div>`;}
+function buildArch(a){if(!a)return '';return `<div class="parch"><strong>ENGINEERING BREAKDOWN</strong><br><br>${a}</div>`;}
+function openP(d){
+  document.getElementById('PTAG').innerHTML=d.tag+(d.tier?` ${buildBadge(d.tier)}`:'');
+  document.getElementById('PTIT').textContent=d.title;
+  document.getElementById('PBOD').innerHTML=d.body;
+  document.getElementById('PMET').innerHTML=buildMetrics(d.metrics);
+  document.getElementById('PARC').innerHTML=buildArch(d.arch);
+  document.getElementById('PSKL').innerHTML=d.skills.map(s=>`<span>${s}</span>`).join('');
+  document.getElementById('PLNK').innerHTML=d.links.map(l=>`<a href="${l.u}" target="_blank"${l.p?' class="primary"':''}>${l.l}</a>`).join('');
+  document.getElementById('PNL').classList.add('open');panelOpen=true;
+}
+
+// ── MISSIONS ──────────────────────────────────────────
+const MISSIONS=[
+  {id:'m1',name:'THE FIRST JOB',body:`Tommy needs a smart developer. Drive to the Flashcard building and prove you can solve real engineering problems — not just CRUD apps. The SM-2 algorithm is your weapon.`,trigger:'flash',reward:'FLASHCARD UNLOCKED — MEMORY SCIENCE IMPLEMENTED'},
+  {id:'m2',name:'AI OR DIE',body:`The city needs intelligence. Head to QuizMind AI — powered by LLaMA 3.3 70B with two-pass verification. The AI doesn't just generate answers. It double-checks them.`,trigger:'quizmind',reward:'QUIZMIND AI — TWO-PASS VERIFICATION COMPLETE'},
+  {id:'m3',name:'GO LEGIT',body:`Time to prove you can ship to production. SpyFash is live. Quiet Hour is live. Real deployments. Real users. 94% TypeScript. That's the Vice City way.`,trigger:'spyfash',reward:'PRODUCTION CREDENTIALS — SOURABH GOYAL IS HIREABLE'},
+];
+let activeMission=null,completedMissions=new Set();
+let pendingMission=null;
+window.acceptMission=function(){
+  document.getElementById('MISSION').style.display='none';
+  if(pendingMission){
+    activeMission=pendingMission;pendingMission=null;
+    notify('MISSION STARTED: '+activeMission.name+' — DRIVE TO OBJECTIVE');
+  }
+};
+window.declineMission=function(){document.getElementById('MISSION').style.display='none';pendingMission=null;};
+function offerMission(m){
+  if(completedMissions.has(m.id)||activeMission||pendingMission) return;
+  pendingMission=m;
+  document.getElementById('MNAME').textContent=m.name;
+  document.getElementById('MBODY').textContent=m.body;
+  document.getElementById('MISSION').style.display='block';
+}
+function checkMissionTrigger(){
+  if(!activeMission||!nearB) return;
+  if(nearB.id===activeMission.trigger){
+    const m=activeMission;
+    completedMissions.add(m.id);activeMission=null;
+    openP(nearB);
+    setTimeout(()=>{
+      const mc=document.getElementById('MCOMP');
+      document.getElementById('MCTITLE').textContent=m.reward;
+      mc.classList.add('show');
+      setTimeout(()=>mc.classList.remove('show'),3500);
+    },600);
+    // Offer next mission
+    const next=MISSIONS.find(ms=>!completedMissions.has(ms.id));
+    if(next) setTimeout(()=>offerMission(next),5000);
+  }
+}
+
+// ── TELEPORT ──────────────────────────────────────────
+window.teleportTo=function(id){
+  const pos=bldgPos[id];if(!pos)return;
+  PLAYER.position.set(pos.x,0.05,pos.z);
+  PLAYER.rotation.set(0,pos.x>0?Math.PI:0,0);spd=0;
+  setTimeout(()=>{const b=bldgData.find(b=>b.id===id);if(b)openP(b);},380);
+  notify('→ '+id.toUpperCase());
+};
+
+// ── NOTIFICATION ──────────────────────────────────────
+let ntT=null;
+function notify(msg){const n=document.getElementById('NT');n.textContent=msg;n.classList.add('on');clearTimeout(ntT);ntT=setTimeout(()=>n.classList.remove('on'),3200);}
+
+// ── MINIMAP ───────────────────────────────────────────
+const mmCtx=document.getElementById('MC').getContext('2d');
+function drawMinimap(){
+  mmCtx.clearRect(0,0,126,126);const cx=63,cy=63,sc=.45;
+  mmCtx.fillStyle='rgba(0,0,0,.9)';mmCtx.beginPath();mmCtx.arc(cx,cy,62,0,Math.PI*2);mmCtx.fill();
+  mmCtx.fillStyle='rgba(0,80,160,.6)';mmCtx.fillRect(cx-14*sc,0,28*sc,126);
+  mmCtx.fillStyle='rgba(20,20,40,.8)';mmCtx.fillRect(cx+20*sc,0,55*sc,126);mmCtx.fillRect(cx-75*sc,0,55*sc,126);
+  mmCtx.strokeStyle='rgba(255,200,0,.25)';mmCtx.lineWidth=1.5;
+  [[80,-130,80,130],[60,-130,60,130],[40,-130,40,130],[-80,-130,-80,130],[-60,-130,-60,130],
+   [20,40,140,40],[20,-40,140,-40],[20,80,140,80],[-140,50,-20,50],[-140,-50,-20,-50]
+  ].forEach(([x1,z1,x2,z2])=>{mmCtx.beginPath();mmCtx.moveTo(cx+x1*sc,cy+z1*sc);mmCtx.lineTo(cx+x2*sc,cy+z2*sc);mmCtx.stroke();});
+  bldgData.forEach(b=>{
+    mmCtx.fillStyle='#'+b.n.toString(16).padStart(6,'0')+'88';
+    mmCtx.fillRect(cx+b.x*sc-b.w*sc/2,cy+b.z*sc-b.d*sc/2,b.w*sc,b.d*sc);
+  });
+  // Mission objective marker
+  if(activeMission){
+    const tgt=bldgData.find(b=>b.id===activeMission.trigger);
+    if(tgt){
+      const mx=cx+tgt.x*sc,mz=cy+tgt.z*sc;
+      mmCtx.fillStyle='#FFD700';
+      mmCtx.beginPath();mmCtx.moveTo(mx,mz-5);mmCtx.lineTo(mx+4,mz+3);mmCtx.lineTo(mx-4,mz+3);mmCtx.closePath();mmCtx.fill();
+    }
+  }
+  npcCars.forEach(c=>{mmCtx.fillStyle='rgba(255,255,255,.35)';mmCtx.fillRect(cx+c.group.position.x*sc-1,cy+c.group.position.z*sc-1,2,2);});
+  const px=cx+PLAYER.position.x*sc,pz=cy+PLAYER.position.z*sc;
+  mmCtx.save();mmCtx.translate(px,pz);mmCtx.rotate(PLAYER.rotation.y);
+  mmCtx.fillStyle='#FF1493';mmCtx.fillRect(-3,-5,6,10);mmCtx.restore();
+  mmCtx.strokeStyle='#FF1493';mmCtx.lineWidth=2;
+  mmCtx.beginPath();mmCtx.arc(cx,cy,61,0,Math.PI*2);mmCtx.stroke();
+}
+
+// ── PROXIMITY ─────────────────────────────────────────
+let nearB=null,ePrsd=false;
+function checkProx(){
+  let cls=null,clsD=9999;
+  bldgData.forEach(b=>{
+    const dx=PLAYER.position.x-b.x,dz=PLAYER.position.z-b.z;
+    const d=Math.sqrt(dx*dx+dz*dz);
+    if(d<Math.max(b.w,b.d)+8&&d<clsD){cls=b;clsD=d;}
+  });
+  const px=document.getElementById('PRX');
+  if(cls!==nearB){
+    if(cls){px.textContent=`[E] ENTER — ${cls.title}`;px.classList.add('on');}
+    else px.classList.remove('on');
+    nearB=cls;
+  }
+  checkMissionTrigger();
+}
+
+// ── RADIO STATIONS ────────────────────────────────────
+const STATIONS=[
+  {name:'V-ROCK FM',song:'RUNNING WITH THE NIGHT'},
+  {name:'FLASH FM',song:'BILLIE JEAN'},
+  {name:'WAVE 103',song:'SAVE A PRAYER'},
+  {name:'WILDSTYLE FM',song:'PLANET ROCK'},
+  {name:'ESPANTOSO',song:'CONGA'},
+];
+let stationIdx=0;
+function nextStation(){
+  stationIdx=(stationIdx+1)%STATIONS.length;
+  const s=STATIONS[stationIdx];
+  document.querySelector('.hrad .rname').textContent=s.name;
+  document.getElementById('RSONG').textContent=s.song;
+  notify(s.name+' — '+s.song);
+}
+
+// ── RECRUITER MODE ────────────────────────────────────
+let recruiterMode=false,rmStep=0,rmTimer=0;
+const rmRoute=[
+  {id:'about',msg:'ABOUT — SOURABH GOYAL, FULL STACK DEV',dur:5},
+  {id:'skills',msg:'SKILLS — JAVA · SPRING BOOT · REACT · TYPESCRIPT',dur:5},
+  {id:'exp',msg:'EXPERIENCE — KAREXPERT INTERNSHIP, GURUGRAM',dur:5},
+  {id:'flash',msg:'BEST PROJECT — FLASHCARD (SM-2 ALGORITHM)',dur:6},
+  {id:'quizmind',msg:'AI PROJECT — QUIZMIND AI (LLAMA 3.3 · GROQ)',dur:6},
+  {id:'spyfash',msg:'PRODUCTION — SPYFASH (LIVE + 94% TYPESCRIPT)',dur:5},
+  {id:'canbuild',msg:'WHAT I CAN BUILD FOR YOUR TEAM',dur:6},
+  {id:'contact',msg:'CONTACT — OPEN TO OPPORTUNITIES',dur:5},
+];
+window.toggleRecruiterMode=function(){
+  recruiterMode=!recruiterMode;
+  const tog=document.getElementById('RMTOG'),st=document.getElementById('RMST');
+  const prog=document.getElementById('RMPROG'),stepEl=document.getElementById('RMSTEP');
+  if(recruiterMode){
+    tog.classList.add('rm-on');st.textContent='ON';
+    prog.style.display='block';stepEl.style.display='block';
+    rmStep=0;rmTimer=0;closeP();runRMStep();
+    notify('RECRUITER MODE ON — AUTO TOUR');
+  } else {
+    tog.classList.remove('rm-on');st.textContent='OFF';
+    prog.style.display='none';stepEl.style.display='none';closeP();
+    notify('RECRUITER MODE OFF');
+  }
+};
+function runRMStep(){
+  if(!recruiterMode) return;
+  if(rmStep>=rmRoute.length){
+    recruiterMode=false;
+    document.getElementById('RMTOG').classList.remove('rm-on');
+    document.getElementById('RMST').textContent='OFF';
+    document.getElementById('RMPROG').style.display='none';
+    document.getElementById('RMSTEP').style.display='none';
+    notify('TOUR COMPLETE — THANKS FOR WATCHING');return;
+  }
+  const step=rmRoute[rmStep];
+  document.getElementById('RMPFILL').style.width=Math.round((rmStep/rmRoute.length)*100)+'%';
+  document.getElementById('RMSTEP').textContent=`${rmStep+1}/${rmRoute.length} — ${step.msg}`;
+  teleportTo(step.id);rmTimer=step.dur;
+}
+function updateRM(dt){
+  if(!recruiterMode) return;
+  rmTimer-=dt;
+  const step=rmRoute[rmStep],elapsed=step.dur-rmTimer;
+  document.getElementById('RMPFILL').style.width=Math.min(Math.round(((rmStep+(elapsed/step.dur))/rmRoute.length)*100),99)+'%';
+  if(rmTimer<=0){rmStep++;runRMStep();}
+}
+
+// ── MAIN LOOP ─────────────────────────────────────────
+const clock=new THREE.Clock();
+let frame=0,started=false;
+
+function startGame(){
+  clearInterval(LDint);clearInterval(lpInt);
+  document.getElementById('PF').style.width='100%';
+  setTimeout(()=>{
+    document.getElementById('LD').style.display='none';
+    document.getElementById('HUD').style.display='block';
+    document.getElementById('SL').style.display='block';
+    started=true;updateCamera();
+    // Hero identity
+    const hero=document.getElementById('HERO');
+    hero.classList.add('show');
+    setTimeout(()=>{
+      hero.style.transition='opacity .6s';hero.style.opacity='0';
+      setTimeout(()=>{hero.style.display='none';},700);
+      notify("WELCOME TO VICE CITY · DRIVE · PRESS E TO ENTER");
+      // Offer first mission after 5s
+      setTimeout(()=>offerMission(MISSIONS[0]),5000);
+    },4500);
+  },500);
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  if(!started) return;
+  const dt=Math.min(clock.getDelta(),.05);frame++;
+  const t=clock.getElapsedTime();
+
+  // Player
+  if(K['KeyW']||K['ArrowUp'])   spd=Math.min(spd+acc,maxSpd);
+  if(K['KeyS']||K['ArrowDown']) spd=Math.max(spd-acc,-maxSpd*.5);
+  if(K['Space']) spd*=.88;
+  if(!K['KeyW']&&!K['KeyS']&&!K['ArrowUp']&&!K['ArrowDown']) spd*=fric;
+  if(Math.abs(spd)>.002){
+    const tf=Math.min(Math.abs(spd)/maxSpd,1);
+    if(K['KeyA']||K['ArrowLeft'])  PLAYER.rotation.y+=trn*tf*(spd>0?1:-1);
+    if(K['KeyD']||K['ArrowRight']) PLAYER.rotation.y-=trn*tf*(spd>0?1:-1);
+  }
+  PLAYER.position.x+=Math.sin(PLAYER.rotation.y)*spd;
+  PLAYER.position.z+=Math.cos(PLAYER.rotation.y)*spd;
+  PLAYER.position.x=M.clamp(PLAYER.position.x,-BOUND,BOUND);
+  PLAYER.position.z=M.clamp(PLAYER.position.z,-BOUND,BOUND);
+  PLAYER.rotation.z=M.clamp(-spd*(K['KeyA']||K['ArrowLeft']?12:K['KeyD']||K['ArrowRight']?-12:0)*.004,-.07,.07);
+  if(K['KeyR']){PLAYER.position.set(80,.05,0);PLAYER.rotation.set(0,0,0);spd=0;wantedLevel=0;updateWantedHUD();}
+  if(K['KeyT']&&frame%30===0) nextStation();
+
+  pwgs.forEach((wg,i)=>{
+    wg.children[0].rotation.x+=spd*12;
+    if(i<2){const st=(K['KeyA']||K['ArrowLeft'])?.55:(K['KeyD']||K['ArrowRight'])?-.55:0;wg.rotation.y+=(st-wg.rotation.y)*.15;}
+  });
+  hlBeam.intensity=dayTime<.25||dayTime>.8?2:.3;
+
+  // Engine audio
+  if(frame%4===0) updateEngineSound(spd,K['KeyW']||K['ArrowUp']);
+
+  updateCamera();
+  document.getElementById('SPD').textContent=Math.abs(Math.round(spd*240));
+  const gameH=Math.floor(dayTime*24),gameM=Math.floor((dayTime*24-gameH)*60);
+  document.getElementById('HDAY').textContent=`${gameH.toString().padStart(2,'0')}:${gameM.toString().padStart(2,'0')}`;
+
+  if(frame%2===0){updateNPCs(dt);updatePeds(dt);}
+  updateTrafficLights(dt);
+  waveObjs.forEach(w=>{w.m.position.z+=w.spd*dt;if(w.m.position.z>60)w.m.position.z=-80;});
+
+  if(frame%3===0){
+    neonEmissives.forEach(n=>{
+      if(n.light) n.light.intensity=n.base*.8+n.base*.25*Math.sin(t*1.8+n.light.position.x*.4);
+      else if(n.emissive) n.emissiveIntensity=1.5+.4*Math.sin(t*2+Math.random()*.5);
+    });
+    streetLightMeshes.forEach(sl=>{sl.light.intensity=sl.base*(dayTime<.25||dayTime>.78?1:.05);});
+    // Rain reflections on road
+    if(rainActive){
+      reflMatE.emissiveIntensity=.06+Math.sin(t*.8)*.02;
+      reflMatW.emissiveIntensity=.05+Math.sin(t*.9+.5)*.02;
+      reflMatE.opacity=.28;reflMatW.opacity=.24;
+    } else {
+      reflMatE.opacity=.18;reflMatW.opacity=.15;
+    }
+  }
+
+  if(frame%180===0){dayTime=M.clamp(dayTime+.004,0,1);updateSky();updateLighting();}
+
+  // E key
+  if(K['KeyE']&&!ePrsd&&nearB){openP(nearB);ePrsd=true;}
+  if(!K['KeyE']) ePrsd=false;
+
+  if(frame%8===0) checkProx();
+  if(frame%4===0) drawMinimap();
+  if(frame%2===0) drawRain();
+  updateLightning(dt);
+  updateWanted(dt);
+  if(recruiterMode) updateRM(dt);
+
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  rainCv.width=window.innerWidth;rainCv.height=window.innerHeight;
+  initRainDrops();
+});
+</script>
+</body>
+</html>
